@@ -123,21 +123,28 @@ function getW3W() {
 }
 
 function showLogs() {
+    playBeep(); // Audio confirmation that you hit it
     const logs = JSON.parse(localStorage.getItem('driveLogs') || "[]");
-    let content = logs.length ? logs.map((log, i) => `
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:5px;">
-            <span style="font-size:0.9rem; text-align:left;">${log}</span>
-            <button onclick="deleteLog(${i})" style="background:var(--neon-red); border:none; color:white; border-radius:5px; padding:2px 8px;">X</button>
+    
+    // Create the list of logs
+    let logItems = logs.length ? logs.map((log, i) => `
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #333; padding-bottom:8px;">
+            <span style="font-size:1rem; color:white;">${log}</span>
+            <button onclick="deleteLog(${i})" style="background:var(--neon-red); border:none; color:white; border-radius:8px; padding:8px 12px; font-weight:bold;">DEL</button>
         </div>
-    `).reverse().join('') : "No logs recorded.";
+    `).reverse().join('') : "<p style='color:#888;'>No notes saved.</p>";
 
-    content += `
-        <div style="margin-top:20px; border-top:1px dashed #666; padding-top:15px; display:grid; gap:10px;">
-            <button onclick="resetData('chiaNumber')" style="background:none; border:1px solid var(--neon-blue); color:var(--neon-blue); padding:10px; border-radius:10px;">RESET WHATSAPP NUMBER</button>
-            <button onclick="resetData('homeAddress')" style="background:none; border:1px solid var(--neon-green); color:var(--neon-green); padding:10px; border-radius:10px;">RESET HOME ADDRESS</button>
+    // Build the Settings section
+    let settingsHTML = `
+        <div style="margin-top:25px; border-top:2px dashed #444; padding-top:20px; display:grid; gap:15px;">
+            <button onclick="resetData('homeAddress')" style="background:none; border:2px solid var(--neon-green); color:var(--neon-green); padding:15px; border-radius:12px; font-weight:bold;">RESET HOME ADDR</button>
+            <button onclick="resetData('chiaNumber')" style="background:none; border:2px solid var(--neon-blue); color:var(--neon-blue); padding:15px; border-radius:12px; font-weight:bold;">RESET WHATSAPP NO.</button>
         </div>
     `;
-    showModal("Logs & Settings", content);
+
+    document.getElementById('modal-title').innerText = "LOGS & SETTINGS";
+    document.getElementById('modal-body').innerHTML = logItems + settingsHTML;
+    document.getElementById('modal').style.display = 'flex';
 }
 
 function deleteLog(index) {
@@ -161,4 +168,5 @@ function showModal(title, body) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
 
