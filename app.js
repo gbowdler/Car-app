@@ -28,17 +28,25 @@ function playBeep() {
     oscillator.stop(audioCtx.currentTime + 0.1); // Short 100ms beep
 }
 
-// Updated Message Chia function with beep
 function messageChia() {
-    playBeep(); 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("Speech not supported.");
+    if (!SpeechRecognition) return alert("Voice not supported.");
+    playBeep();
     
     const recognition = new SpeechRecognition();
+    recognition.lang = 'en-GB';
+
     recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript;
-        window.location.href = `sms:+447000000000?body=${encodeURIComponent(text)}`;
+        const speechToText = event.results[0][0].transcript;
+        
+        // CHIA'S NUMBER: Use format 447123456789 (No + sign, no leading 0)
+        const phoneNumber = "447000000000"; 
+        
+        // WhatsApp Universal Link
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(speechToText)}`;
+        
+        window.location.href = whatsappUrl;
     };
+    
     recognition.start();
 }
 
@@ -48,3 +56,4 @@ function startVoiceLog() {
     // ... rest of your voice log logic from earlier
 
 }
+
