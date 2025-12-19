@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DriveDash</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    
+    <script type="module" src="https://cdn.what3words.com/javascript-components@5.0.0/dist/what3words/what3words.esm.js"></script>
+</head>
+<body>
+
+    <div id="status-bar">
+        <h1 id="clock">00:00</h1>
+        <p id="location-text">Initialising System...</p>
+    </div>
+
+    <div class="grid-container">
+        <button class="btn green" onclick="navHome()">NAV HOME</button>
+        <button class="btn blue" onclick="messageChia()">MSG CHIA</button>
+        <button class="btn purple" onclick="startVoiceLog()">VOICE LOG</button>
+        <button class="btn amber" onclick="findFuel()">FUEL</button>
+        <button class="btn red" onclick="getW3W()">W3W</button>
+        <button class="btn grey" onclick="showLogs()">VIEW LOGS</button>
+    </div>
+
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modal-title">Information</h2>
+            <div id="modal-body"></div>
+            <button class="close-btn" onclick="closeModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
