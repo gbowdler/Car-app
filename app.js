@@ -66,13 +66,26 @@ function messageChia() {
     playBeep();
     const rec = new SpeechRecognition();
     rec.lang = 'en-GB';
-    document.getElementById('location-text').innerText = "LISTENING (WA)...";
-    document.getElementById('location-text').style.color = "var(--neon-blue)";
+    rec.continuous = false; // Stops after one sentence
+
+    // CHANGE: Make the status bar clickable to "Force Send"
+    const status = document.getElementById('location-text');
+    status.innerText = "TAP TO STOP & SEND";
+    status.style.color = "var(--neon-blue)";
+    status.onclick = () => { rec.stop(); }; // Stops recording and triggers onresult
 
     rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
-        window.location.href = `https://wa.me/${chiaNumber}?text=${encodeURIComponent(text)}`;
+        const waUrl = `https://wa.me/${chiaNumber}?text=${encodeURIComponent(text)}`;
+        window.location.href = waUrl;
     };
+
+    rec.onend = () => {
+        status.onclick = null; // Remove the click listener
+        status.innerText = "0 MPH";
+        status.style.color = "white";
+    };
+
     rec.start();
 }
 
@@ -148,3 +161,4 @@ function showModal(title, body) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
