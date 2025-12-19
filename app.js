@@ -62,22 +62,52 @@ function messageChia() {
 }
 
 function startVoiceLog() {
-    if (!SpeechRecognition) return alert("Voice not supported.");
+    // 1. Check if the browser supports Speech
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Voice recognition not supported on this browser. Try Chrome or Safari.");
+        return;
+    }
+
     playBeep();
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-GB';
+    recognition.interimResults = false; // Only want the final sentence
+
+    // Update the UI so you know it's listening
+    document.getElementById('location-text').innerText = "LISTENING...";
+    document.getElementById('location-text').style.color = "var(--neon-purple)";
 
     recognition.onresult = (event) => {
         const text = event.results[0][0].transcript;
+        
+        // Get existing logs or start a new array
         const logs = JSON.parse(localStorage.getItem('driveLogs') || "[]");
-        const time = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-        logs.push(`${time}: ${text}`);
+        
+        // Create a timestamped entry
+        const timestamp = new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit'});
+        logs.push(`[${timestamp}] ${text}`);
+        
+        // Save back to local storage
         localStorage.setItem('driveLogs', JSON.stringify(logs));
         
         // Visual confirmation
-        document.getElementById('location-text').innerText = "LOG SAVED";
-        setTimeout(() => document.getElementById('location-text').innerText = "0 MPH", 2000);
+        document.getElementById('location-text').innerText = "SAVED: " + text.substring(0, 15) + "...";
+        document.getElementById('location-text').style.color = "var(--neon-green)";
+        
+        // Reset to Speedometer after 3 seconds
+        setTimeout(() => {
+            document.getElementById('location-text').style.color = "white";
+            document.getElementById('location-text').innerText = "0 MPH";
+        }, 3000);
     };
+
+    recognition.onerror = (event) => {
+        console.error("Speech Error:", event.error);
+        document.getElementById('location-text').innerText = "RETRY...";
+        document.getElementById('location-text').style.color = "var(--neon-red)";
+    };
+
     recognition.start();
 }
 
@@ -108,3 +138,4 @@ function showModal(title, body) {
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
+
