@@ -28,10 +28,22 @@ function playBeep() {
     osc.stop(audioCtx.currentTime + 0.1);
 }
 
-// 3. NAVIGATION FUNCTIONS
+//  SMART NAV HOME
 function navHome() {
-    // Replace 'Home+Address' with your actual postcode or street
-    window.location.href = "https://www.google.com/maps/dir/?api=1&destination=Home";
+    let homeAddress = localStorage.getItem('homeAddress');
+
+    if (!homeAddress) {
+        let input = prompt("Enter your Home Postcode or Address:");
+        if (input) {
+            localStorage.setItem('homeAddress', input);
+            homeAddress = input;
+        } else {
+            return;
+        }
+    }
+
+    // Opens Google Maps with your private address
+    window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(homeAddress)}`;
 }
 
 function findFuel() {
@@ -39,25 +51,34 @@ function findFuel() {
     window.location.href = "https://www.google.com/maps/search/petrol+stations+near+me/";
 }
 
+//  SMART MESSAGE CHIA
 function messageChia() {
+    let chiaNumber = localStorage.getItem('chiaNumber');
+
+    if (!chiaNumber) {
+        let input = prompt("Enter Chia's number (e.g. 447123456789):");
+        if (input) {
+            // Clean the input of spaces and + signs
+            chiaNumber = input.replace(/\s+/g, '').replace('+', '');
+            localStorage.setItem('chiaNumber', chiaNumber);
+        } else {
+            return;
+        }
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return alert("Voice not supported.");
-    playBeep();
     
+    playBeep();
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-GB';
+    document.getElementById('location-text').innerText = "LISTENING (WHATSAPP)...";
 
     recognition.onresult = (event) => {
-        const speechToText = event.results[0][0].transcript;
-        
-        // CHIA'S NUMBER: Use format 447123456789 (No + sign, no leading 0)
-        const phoneNumber = "447000000000"; 
-        
-        // WhatsApp Universal Link
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(speechToText)}`;
-        
-        window.location.href = whatsappUrl;
+        const text = event.results[0][0].transcript;
+        const waUrl = `https://wa.me/${chiaNumber}?text=${encodeURIComponent(text)}`;
+        window.location.href = waUrl;
     };
-    
     recognition.start();
 }
 
@@ -168,5 +189,6 @@ function showModal(title, body) {
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
+
 
 
