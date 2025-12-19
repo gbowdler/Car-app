@@ -1,3 +1,16 @@
+// Live Speedometer
+navigator.geolocation.watchPosition((pos) => {
+    // Convert meters per second to MPH
+    const speed = pos.coords.speed; // speed is in m/s
+    if (speed !== null) {
+        const mph = Math.round(speed * 2.23694);
+        document.getElementById('location-text').innerText = `${mph} MPH`;
+    } else {
+        document.getElementById('location-text').innerText = "0 MPH";
+    }
+}, (err) => {
+    console.log("GPS Error");
+}, { enableHighAccuracy: true });
 // Function to play a 'Listening' beep
 function playBeep() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -33,4 +46,5 @@ function messageChia() {
 function startVoiceLog() {
     playBeep();
     // ... rest of your voice log logic from earlier
+
 }
