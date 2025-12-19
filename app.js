@@ -124,8 +124,38 @@ function getW3W() {
 
 function showLogs() {
     const logs = JSON.parse(localStorage.getItem('driveLogs') || "[]");
-    const content = logs.length ? logs.reverse().join('<br><hr>') : "No logs saved yet.";
-    showModal("Voice Logs", content);
+    
+    // We create the HTML for each log with a delete button
+    let content = "";
+    
+    if (logs.length === 0) {
+        content = "No logs recorded.";
+    } else {
+        // Map through logs and add a 'Delete' button to each one
+        // We use the index (i) to know which one to remove
+        content = logs.map((log, i) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
+                <span style="text-align: left; font-size: 1rem;">${log}</span>
+                <button onclick="deleteLog(${i})" style="background: var(--neon-red); color: white; border: none; border-radius: 5px; padding: 5px 10px; font-weight: bold; margin-left: 10px;">X</button>
+            </div>
+        `).reverse().join(''); // Reverse so newest is at the top
+    }
+    
+    showModal("Saved Logs", content);
+}
+
+function deleteLog(index) {
+    // 1. Get current logs
+    let logs = JSON.parse(localStorage.getItem('driveLogs') || "[]");
+    
+    // 2. Remove the one at that index
+    logs.splice(index, 1);
+    
+    // 3. Save the new list
+    localStorage.setItem('driveLogs', JSON.stringify(logs));
+    
+    // 4. Refresh the display so it disappears immediately
+    showLogs();
 }
 
 // MODAL CONTROLS
@@ -138,4 +168,5 @@ function showModal(title, body) {
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
+
 
