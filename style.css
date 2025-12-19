@@ -1,7 +1,9 @@
+/* --- 1. THEME VARIABLES --- */
 :root {
     --bg-color: #000000;
     --btn-bg: #1a1a1a;
     --text-color: #ffffff;
+    /* Neon Accent Colours */
     --neon-green: #39ff14;
     --neon-blue: #00d2ff;
     --neon-purple: #bc13fe;
@@ -10,99 +12,105 @@
     --neon-grey: #ffffff;
 }
 
-/* Day Mode automatic switch */
+/* --- 2. AUTOMATIC DAY MODE --- */
 @media (prefers-color-scheme: light) {
     :root {
         --bg-color: #f0f0f0;
         --btn-bg: #ffffff;
         --text-color: #000000;
+        --neon-grey: #333333;
     }
 }
 
+/* --- 3. CORE LAYOUT --- */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Stops the page from bouncing/scrolling */
+    overflow: hidden; /* Prevents scrolling/bouncing in the cradle */
+    touch-action: manipulation; /* Improves tap response time */
 }
 
+/* --- 4. STATUS HEADER (TOP 20%) --- */
 #status-bar {
-    height: 20vh; /* Top 20% of screen */
+    height: 20vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    background: rgba(0,0,0,0.2);
     border-bottom: 1px solid #333;
+    position: relative;
+    z-index: 10;
 }
 
-#clock { font-size: 3.5rem; margin: 0; font-weight: bold; }
-#location-text { font-size: 1.2rem; margin: 5px 0 0; color: #888; }
+#clock { 
+    font-size: 4rem; 
+    margin: 0; 
+    font-weight: 800;
+    letter-spacing: -2px;
+}
 
+#location-text { 
+    font-size: 1.4rem; 
+    margin: 5px 0 0; 
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* --- 5. BUTTON GRID (BOTTOM 80%) --- */
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 columns */
-    grid-template-rows: repeat(3, 1fr); /* 3 rows */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
     gap: 15px;
     padding: 15px;
-    height: 80vh; /* Fills the rest of the screen */
+    height: 80vh;
     box-sizing: border-box;
+    position: relative;
+    z-index: 20;
 }
 
 .btn {
     background: var(--btn-bg);
     color: var(--text-color);
-    border: 3px solid; /* Thicker borders for visibility */
+    border: 4px solid; /* Thicker for visibility */
     border-radius: 25px;
     font-size: 1.3rem;
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    -webkit-tap-highlight-color: transparent; /* Removes grey box on tap */
 }
 
-/* Neon Accents */
-.green { border-color: var(--neon-green); }
-.blue { border-color: var(--neon-blue); }
-.purple { border-color: var(--neon-purple); }
-.amber { border-color: var(--neon-amber); }
-.red { border-color: var(--neon-red); }
-.grey { border-color: var(--neon-grey); }
+/* Neon Glow Assignments */
+.green  { border-color: var(--neon-green);  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2); }
+.blue   { border-color: var(--neon-blue);   box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.2); }
+.purple { border-color: var(--neon-purple); box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.2); }
+.amber  { border-color: var(--neon-amber);  box-shadow: inset 0 0 10px rgba(255, 174, 0, 0.2); }
+.red    { border-color: var(--neon-red);    box-shadow: inset 0 0 10px rgba(255, 49, 49, 0.2); }
+.grey   { border-color: var(--neon-grey);   box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2); }
 
-/* Prevent grey highlight when tapping on mobile */
-button { -webkit-tap-highlight-color: transparent; }
-
-#modal-body {
-    max-height: 50vh; /* Limits height so you can scroll through many logs */
-    overflow-y: auto;
-    padding-right: 5px;
-}
-
-/* Custom scrollbar for a cleaner look */
-#modal-body::-webkit-scrollbar {
-    width: 5px;
-}
-#modal-body::-webkit-scrollbar-thumb {
-    background: #444;
-    border-radius: 10px;
-}
-
-/* Ensure the modal is ALWAYS on top of the buttons */
+/* --- 6. MODAL & SETTINGS (LOGS) --- */
 .modal {
     display: none;
     position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 100vw; 
+    top: 0; left: 0;
+    width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.95); /* Slightly darker for focus */
-    z-index: 9999; /* Higher than everything else */
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999 !important; /* Forces modal to front */
     justify-content: center;
     align-items: center;
 }
@@ -111,16 +119,33 @@ button { -webkit-tap-highlight-color: transparent; }
     background: #1a1a1a;
     padding: 25px;
     border: 2px solid var(--neon-grey);
-    border-radius: 20px;
+    border-radius: 30px;
     width: 85%;
-    max-height: 80vh; /* Don't let it go off-screen */
-    overflow-y: auto; /* Allow scrolling INSIDE the settings list */
+    max-height: 85vh;
+    overflow-y: auto;
     text-align: center;
+    box-shadow: 0 0 30px rgba(255,255,255,0.1);
 }
 
-/* Make sure the View Logs button text is very clear */
-.grey { 
-    border-color: var(--neon-grey); 
+#modal-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
     color: var(--neon-grey);
-    font-size: 1.5rem; /* Larger font for the logs button */
+}
+
+#modal-body {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.close-btn {
+    margin-top: 25px;
+    background: #444;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 100%;
 }
