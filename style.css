@@ -92,3 +92,35 @@ button { -webkit-tap-highlight-color: transparent; }
     background: #444;
     border-radius: 10px;
 }
+
+/* Ensure the modal is ALWAYS on top of the buttons */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh;
+    background: rgba(0,0,0,0.95); /* Slightly darker for focus */
+    z-index: 9999; /* Higher than everything else */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    padding: 25px;
+    border: 2px solid var(--neon-grey);
+    border-radius: 20px;
+    width: 85%;
+    max-height: 80vh; /* Don't let it go off-screen */
+    overflow-y: auto; /* Allow scrolling INSIDE the settings list */
+    text-align: center;
+}
+
+/* Make sure the View Logs button text is very clear */
+.grey { 
+    border-color: var(--neon-grey); 
+    color: var(--neon-grey);
+    font-size: 1.5rem; /* Larger font for the logs button */
+}
