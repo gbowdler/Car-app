@@ -115,10 +115,37 @@ function startVoiceLog() {
 }
 
 // --- 6. WHAT3WORDS & MODAL ---
-function getW3W() {
-    navigator.geolocation.getCurrentPosition((pos) => {
-        const url = `https://what3words.com/${pos.coords.latitude},${pos.coords.longitude}`;
-        showModal("Your W3W", `Location Detected:<br><br><a href="${url}" target="_blank" style="color:var(--neon-red); font-size:1.2rem;">Open what3words.com</a>`);
+
+async function getW3W() {
+    playBeep();
+    document.getElementById('location-text').innerText = "FETCHING W3W...";
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        try {
+            // This calls the what3words service to convert lat/lng to words
+            const response = await fetch(`https://api.what3words.com/v3/convert-to-3wa?coordinates=${lat},${lng}&key=HMT2V6MN`);
+            const data = await response.json();
+            const words = data.words; // e.g. "filled.count.soap"
+
+            // Display the words in large text in the modal
+            showModal("Location Found", `
+                <div style="font-size: 2rem; color: var(--neon-red); font-weight: bold; margin: 20px 0;">
+                    ///${words}
+                </div>
+                <button onclick="window.open('https://what3words.com/${words}', '_blank')" 
+                        style="background:none; border:1px solid white; color:white; padding:10px; border-radius:10px; width:100%;">
+                    VIEW ON MAP
+                </button>
+            `);
+            
+            document.getElementById('location-text').innerText = "0 MPH";
+        } catch (error) {
+            // Fallback if API fails: show the coordinates and a link
+            showModal("Location Error", `Couldn't get words. <br> <a href="https://what3words.com/${lat},${lng}" target="_blank">View Map Here</a>`);
+        }
     });
 }
 
@@ -168,5 +195,6 @@ function showModal(title, body) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
 
 
