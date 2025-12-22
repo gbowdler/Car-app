@@ -170,6 +170,19 @@ function showLogs() {
     document.getElementById('modal-title').innerText = "LOGS & SETTINGS";
     document.getElementById('modal-body').innerHTML = logItems + settingsHTML;
     document.getElementById('modal').style.display = 'flex';
+
+    // Enhanced Settings Buttons inside the modal
+    content += `
+        <div style="margin-top: 25px; border-top: 2px dashed #444; padding-top: 20px; display: grid; gap: 15px;">
+            <button onclick="resetData('homeAddress')" style="background:none; border:2px solid var(--neon-green); color:var(--neon-green); padding:20px; border-radius:15px; font-weight:bold; font-size:1.1rem;">
+                CHANGE HOME ADDRESS
+            </button>
+            <button onclick="resetData('chiaNumber')" style="background:none; border:2px solid var(--neon-blue); color:var(--neon-blue); padding:20px; border-radius:15px; font-weight:bold; font-size:1.1rem;">
+                CHANGE CHIA NUMBER
+            </button>
+        </div>
+    `;
+    
 }
 
 function deleteLog(index) {
@@ -193,6 +206,7 @@ function showModal(title, body) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
 
 
 
