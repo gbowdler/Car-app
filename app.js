@@ -52,10 +52,11 @@ function findFuel() {
 // --- 5. VOICE COMMANDS (WHATSAPP & LOGS) ---
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+// --- MSG CHIA (WhatsApp) ---
 function messageChia() {
     let chiaNumber = localStorage.getItem('chiaNumber');
     if (!chiaNumber) {
-        let input = prompt("Enter Chia's number (e.g. 447123456789):");
+        let input = prompt("Enter Chia's number (447...):");
         if (input) {
             chiaNumber = input.replace(/\s+/g, '').replace('+', '');
             localStorage.setItem('chiaNumber', chiaNumber);
@@ -66,39 +67,45 @@ function messageChia() {
     playBeep();
     const rec = new SpeechRecognition();
     rec.lang = 'en-GB';
-    rec.continuous = false; // Stops after one sentence
+    rec.continuous = false; // Ensures it stops after one sentence
+    rec.interimResults = false;
 
-    // CHANGE: Make the status bar clickable to "Force Send"
-    const status = document.getElementById('location-text');
-    status.innerText = "TAP TO STOP & SEND";
-    status.style.color = "var(--neon-blue)";
-    status.onclick = () => { rec.stop(); }; // Stops recording and triggers onresult
+    document.getElementById('location-text').innerText = "LISTENING (WA)...";
+    document.getElementById('location-text').style.color = "var(--neon-blue)";
 
     rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
-        const waUrl = `https://wa.me/${chiaNumber}?text=${encodeURIComponent(text)}`;
-        window.location.href = waUrl;
+        rec.stop(); // <--- CRITICAL: Manually kills the mic immediately
+        window.location.href = `https://wa.me/${chiaNumber}?text=${encodeURIComponent(text)}`;
     };
 
+    // Fail-safe: If you don't speak, kill the mic after 6 seconds
+    const silenceTimeout = setTimeout(() => { rec.stop(); }, 6000);
+
     rec.onend = () => {
-        status.onclick = null; // Remove the click listener
-        status.innerText = "0 MPH";
-        status.style.color = "white";
+        clearTimeout(silenceTimeout);
+        document.getElementById('location-text').innerText = "0 MPH";
+        document.getElementById('location-text').style.color = "white";
     };
 
     rec.start();
 }
 
+// --- VOICE LOG ---
 function startVoiceLog() {
     if (!SpeechRecognition) return alert("Voice not supported.");
     playBeep();
     const rec = new SpeechRecognition();
     rec.lang = 'en-GB';
+    rec.continuous = false; // Ensures it stops after one sentence
+
     document.getElementById('location-text').innerText = "LISTENING (LOG)...";
     document.getElementById('location-text').style.color = "var(--neon-purple)";
 
     rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
+        rec.stop(); // <--- CRITICAL: Manually kills the mic immediately
+        
         const logs = JSON.parse(localStorage.getItem('driveLogs') || "[]");
         const time = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
         logs.push(`[${time}] ${text}`);
@@ -111,6 +118,7 @@ function startVoiceLog() {
             document.getElementById('location-text').style.color = "white";
         }, 3000);
     };
+
     rec.start();
 }
 
@@ -206,6 +214,7 @@ function showModal(title, body) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
 
 
 
