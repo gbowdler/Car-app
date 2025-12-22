@@ -57,6 +57,14 @@ body {
     letter-spacing: -2px;
 }
 
+#app-logo {
+    height: 50px; /* Adjust height to fit your status bar */
+    width: auto;
+    margin: 10px auto 0;
+    display: block;
+    filter: drop-shadow(0 0 5px var(--neon-blue)); /* Optional: gives logo a neon glow */
+}
+
 #location-text { 
     font-size: 1.4rem; 
     margin: 5px 0 0; 
@@ -149,3 +157,4 @@ body {
     font-weight: bold;
     width: 100%;
 }
+
