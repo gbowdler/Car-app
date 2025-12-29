@@ -27,19 +27,19 @@
 </div>
 
     <div class="grid-container">
-        <button class="btn green" onclick="navHome()">NAV HOME</button>
-        <button class="btn blue" onclick="messageChia()">MSG CHIA</button>
-        <button class="btn purple" onclick="startVoiceLog()">VOICE LOG</button>
-        <button class="btn amber" onclick="findFuel()">FUEL</button>
-        <button class="btn red" onclick="getW3W()">W3W</button>
-        <button class="btn grey" onclick="showLogs()">VIEW LOGS</button>
+        <button class="btn green" data-action="nav-home">NAV HOME</button>
+        <button class="btn blue" data-action="message-chia">MSG CHIA</button>
+        <button class="btn purple" data-action="voice-log">VOICE LOG</button>
+        <button class="btn amber" data-action="fuel">FUEL</button>
+        <button class="btn red" data-action="w3w">W3W</button>
+        <button class="btn grey" data-action="show-logs">VIEW LOGS</button>
     </div>
 
-    <div id="modal" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
+    <div id="modal" class="modal">
+        <div class="modal-content">
             <h2 id="modal-title">Information</h2>
             <div id="modal-body"></div>
-            <button class="close-btn" onclick="closeModal()">CLOSE</button>
+            <button class="close-btn" data-action="close-modal">CLOSE</button>
         </div>
     </div>
 
