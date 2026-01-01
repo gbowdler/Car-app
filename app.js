@@ -226,7 +226,7 @@ const DriveDashApp = (function() {
     function resetLocationText() {
         if (elements.locationText) {
             elements.locationText.innerText = UI_STATES.DEFAULT_SPEED;
-            elements.locationText.style.color = 'white';
+            elements.locationText.style.color = '';  // Reset to CSS default
         }
     }
 

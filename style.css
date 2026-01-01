@@ -50,11 +50,12 @@ body {
     z-index: 10;
 }
 
-#clock { 
-    font-size: 4rem; 
-    margin: 0; 
+#clock {
+    font-size: 4rem;
+    margin: 0;
     font-weight: 800;
     letter-spacing: -2px;
+    color: var(--text-color);
 }
 
 #app-logo {
@@ -71,6 +72,7 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -2px;
+    color: var(--text-color);
 }
 
 /* --- 5. BUTTON GRID (BOTTOM 80%) --- */
