@@ -65,11 +65,12 @@ body {
     filter: drop-shadow(0 0 5px var(--neon-blue)); /* Optional: gives logo a neon glow */
 }
 
-#location-text { 
-    font-size: 1.4rem; 
-    margin: 5px 0 0; 
-    font-weight: bold;
+#location-text {
+    font-size: 4rem;
+    margin: 5px 0 0;
+    font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: -2px;
 }
 
 /* --- 5. BUTTON GRID (BOTTOM 80%) --- */

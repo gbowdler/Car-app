@@ -261,7 +261,8 @@ const DriveDashApp = (function() {
 
     function findFuel() {
         try {
-            window.location.href = "https://www.google.com/maps/search/petrol+stations+near+me/";
+            // Search for petrol stations that are open now
+            window.location.href = "https://www.google.com/maps/search/petrol+stations+open+now+near+me/";
         } catch (e) {
             console.error('Fuel search error:', e);
             showError('Failed to open fuel search.');
