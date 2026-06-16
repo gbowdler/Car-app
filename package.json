@@ -1,0 +1,16 @@
+{
+  "name": "drivedash",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "gmail:auth": "node scripts/get-gmail-refresh-token.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.2",
+    "googleapis": "^173.0.0"
+  }
+}
