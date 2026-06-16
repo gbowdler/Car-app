@@ -37,9 +37,9 @@ body {
     touch-action: manipulation; /* Improves tap response time */
 }
 
-/* --- 4. STATUS HEADER (TOP 20%) --- */
+/* --- 4. STATUS HEADER (TOP 16%) --- */
 #status-bar {
-    height: 20vh;
+    height: 16vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -50,9 +50,9 @@ body {
     z-index: 10;
 }
 
-#clock { 
-    font-size: 4rem; 
-    margin: 0; 
+#clock {
+    font-size: 3.2rem;
+    margin: 0;
     font-weight: 800;
     letter-spacing: -2px;
 }
@@ -66,21 +66,21 @@ body {
 }
 
 #location-text {
-    font-size: 4rem;
+    font-size: 3.2rem;
     margin: 5px 0 0;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -2px;
 }
 
-/* --- 5. BUTTON GRID (BOTTOM 80%) --- */
+/* --- 5. BUTTON GRID (62%) --- */
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(3, 1fr);
     gap: 15px;
     padding: 15px;
-    height: 80vh;
+    height: 62vh;
     box-sizing: border-box;
     position: relative;
     z-index: 20;
@@ -157,5 +157,117 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
     width: 100%;
+}
+
+/* --- 7. VOICE ASSISTANT BAR (BOTTOM 22%) --- */
+#assistant-bar {
+    height: 22vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    border-top: 1px solid #333;
+    background: rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 20;
+}
+
+.talk-btn {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: var(--btn-bg);
+    color: var(--text-color);
+    border: 4px solid var(--neon-grey);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.talk-btn.listening {
+    border-color: var(--neon-red);
+    box-shadow: inset 0 0 12px rgba(255, 49, 49, 0.3);
+    animation: pulse 1s infinite;
+}
+
+.talk-btn.thinking {
+    border-color: var(--neon-amber);
+    box-shadow: inset 0 0 12px rgba(255, 174, 0, 0.3);
+    animation: pulse 1.4s infinite;
+}
+
+.talk-btn.speaking {
+    border-color: var(--neon-blue);
+    box-shadow: inset 0 0 12px rgba(0, 210, 255, 0.3);
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+#assistant-status {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #aaa;
+    text-align: center;
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.transcript-link {
+    background: none;
+    border: none;
+    color: var(--neon-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- 8. ASSISTANT TRANSCRIPT --- */
+#assistant-transcript {
+    text-align: left;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.transcript-empty {
+    color: #888;
+    text-align: center;
+}
+
+.transcript-row {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.transcript-row .role {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.transcript-row.user .role { color: var(--neon-blue); }
+.transcript-row.assistant .role { color: var(--neon-green); }
+.transcript-row.error .role { color: var(--neon-red); }
+
+.transcript-row .text {
+    color: white;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 

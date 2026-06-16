@@ -34,6 +34,12 @@
         <button class="btn grey" data-action="show-logs">VIEW LOGS</button>
     </div>
 
+    <div id="assistant-bar">
+        <button id="talk-btn" class="talk-btn" data-action="talk">TALK</button>
+        <p id="assistant-status">TAP TO TALK</p>
+        <button id="transcript-btn" class="transcript-link" data-action="show-transcript">TRANSCRIPT</button>
+    </div>
+
     <div id="modal" class="modal">
         <div class="modal-content">
             <h2 id="modal-title">Information</h2>
@@ -42,7 +48,16 @@
         </div>
     </div>
 
+    <div id="assistant-panel" class="modal">
+        <div class="modal-content">
+            <h2 id="assistant-panel-title">ASSISTANT</h2>
+            <div id="assistant-transcript"></div>
+            <button class="close-btn" data-action="close-assistant-panel">CLOSE</button>
+        </div>
+    </div>
+
     <script src="app.js"></script>
+    <script src="assistant.js"></script>
 </body>
 
 </html>

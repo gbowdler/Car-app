@@ -681,7 +681,8 @@ const DriveDashApp = (function() {
             shareLocation: actionShareLocation,
             composeWhatsAppMessage: actionComposeWhatsAppMessage,
             addVoiceNote: actionAddVoiceNote,
-            getRecentNotes: actionGetRecentNotes
+            getRecentNotes: actionGetRecentNotes,
+            playBeep
         }
     };
 })();
