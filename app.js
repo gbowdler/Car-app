@@ -231,6 +231,13 @@ const DriveDashApp = (function() {
     }
 
     // --- NAVIGATION & FUEL ---
+    const FUEL_SEARCH_URL = "https://www.google.com/maps/search/petrol+stations+open+now+near+me/";
+
+    function buildNavHomeUrl(homeAddress) {
+        const encoded = safeEncodeURI(homeAddress);
+        return encoded ? `https://www.google.com/maps/dir/?api=1&destination=${encoded}` : null;
+    }
+
     function navHome() {
         try {
             let homeAddress = localStorage.getItem(STORAGE_KEYS.HOME_ADDRESS);
@@ -249,9 +256,9 @@ const DriveDashApp = (function() {
                 homeAddress = validated;
             }
 
-            const encoded = safeEncodeURI(homeAddress);
-            if (encoded) {
-                window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encoded}`;
+            const url = buildNavHomeUrl(homeAddress);
+            if (url) {
+                window.location.href = url;
             }
         } catch (e) {
             console.error('Navigation error:', e);
@@ -262,14 +269,66 @@ const DriveDashApp = (function() {
     function findFuel() {
         try {
             // Search for petrol stations that are open now
-            window.location.href = "https://www.google.com/maps/search/petrol+stations+open+now+near+me/";
+            window.location.href = FUEL_SEARCH_URL;
         } catch (e) {
             console.error('Fuel search error:', e);
             showError('Failed to open fuel search.');
         }
     }
 
+    // --- ASSISTANT ACTIONS ---
+    // Pure, prompt-free counterparts used by the voice assistant tool layer.
+    // They never block on prompt()/confirm() and never navigate directly;
+    // instead they report a navigateUrl so the caller can speak a reply
+    // first and navigate afterwards (window.location.href would otherwise
+    // tear the page down mid-utterance).
+    function actionNavigateHome() {
+        try {
+            const homeAddress = localStorage.getItem(STORAGE_KEYS.HOME_ADDRESS);
+            if (!homeAddress) {
+                return { ok: false, error: 'Home address is not set yet. Set it from the NAV HOME button first.' };
+            }
+            const url = buildNavHomeUrl(homeAddress);
+            if (!url) return { ok: false, error: 'Failed to build navigation link.' };
+            return { ok: true, navigateUrl: url };
+        } catch (e) {
+            console.error('Navigate home action error:', e);
+            return { ok: false, error: 'Failed to start navigation.' };
+        }
+    }
+
+    function actionFindFuel() {
+        return { ok: true, navigateUrl: FUEL_SEARCH_URL };
+    }
+
+    function actionShareLocation() {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                resolve({ ok: false, error: 'Geolocation is not supported on this device.' });
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    resolve({
+                        ok: true,
+                        lat: Number(lat.toFixed(5)),
+                        lng: Number(lng.toFixed(5)),
+                        w3wUrl: `https://what3words.com/${lat},${lng}`
+                    });
+                },
+                () => resolve({ ok: false, error: 'Location is unavailable. Make sure Location Services are on.' })
+            );
+        });
+    }
+
     // --- WHATSAPP MESSAGE ---
+    function buildWhatsAppUrl(number, text) {
+        const encoded = safeEncodeURI(text);
+        return encoded ? `https://wa.me/${number}?text=${encoded}` : null;
+    }
+
     function messageChia() {
         try {
             let chiaNumber = localStorage.getItem(STORAGE_KEYS.CHIA_NUMBER);
@@ -290,9 +349,9 @@ const DriveDashApp = (function() {
 
             const rec = createSpeechRecognizer(
                 (text) => {
-                    const encoded = safeEncodeURI(text);
-                    if (encoded) {
-                        window.location.href = `https://wa.me/${chiaNumber}?text=${encoded}`;
+                    const url = buildWhatsAppUrl(chiaNumber, text);
+                    if (url) {
+                        window.location.href = url;
                     }
                 },
                 UI_STATES.LISTENING_WHATSAPP,
@@ -308,19 +367,41 @@ const DriveDashApp = (function() {
         }
     }
 
+    // ASSISTANT ACTION: pre-fills WhatsApp with the given text but never
+    // sends it automatically — the user still has to tap send themselves.
+    function actionComposeWhatsAppMessage({ message } = {}) {
+        try {
+            const chiaNumber = localStorage.getItem(STORAGE_KEYS.CHIA_NUMBER);
+            if (!chiaNumber) {
+                return { ok: false, error: 'No WhatsApp contact saved yet. Set it from the MSG CHIA button first.' };
+            }
+            const text = sanitizeInput(message);
+            if (!text) return { ok: false, error: 'No message text provided.' };
+            const url = buildWhatsAppUrl(chiaNumber, text);
+            if (!url) return { ok: false, error: 'Failed to build WhatsApp link.' };
+            return { ok: true, navigateUrl: url };
+        } catch (e) {
+            console.error('Compose WhatsApp action error:', e);
+            return { ok: false, error: 'Failed to compose WhatsApp message.' };
+        }
+    }
+
     // --- VOICE LOG ---
+    function appendDriveLog(text) {
+        const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.DRIVE_LOGS) || "[]");
+        const time = new Date().toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        logs.push(`[${time}] ${text}`);
+        localStorage.setItem(STORAGE_KEYS.DRIVE_LOGS, JSON.stringify(logs));
+    }
+
     function startVoiceLog() {
         try {
             const rec = createSpeechRecognizer(
                 (text) => {
-                    const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.DRIVE_LOGS) || "[]");
-                    const time = new Date().toLocaleTimeString('en-GB', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    logs.push(`[${time}] ${text}`);
-                    localStorage.setItem(STORAGE_KEYS.DRIVE_LOGS, JSON.stringify(logs));
+                    appendDriveLog(text);
 
                     if (elements.locationText) {
                         elements.locationText.innerText = UI_STATES.NOTE_SAVED;
@@ -341,6 +422,29 @@ const DriveDashApp = (function() {
         } catch (e) {
             console.error('Voice log error:', e);
             showError('Failed to start voice log.');
+        }
+    }
+
+    function actionAddVoiceNote({ note } = {}) {
+        try {
+            const text = sanitizeInput(note);
+            if (!text) return { ok: false, error: 'No note text provided.' };
+            appendDriveLog(text);
+            return { ok: true };
+        } catch (e) {
+            console.error('Add voice note action error:', e);
+            return { ok: false, error: 'Failed to save note.' };
+        }
+    }
+
+    function actionGetRecentNotes({ count } = {}) {
+        try {
+            const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.DRIVE_LOGS) || "[]");
+            const n = Number.isInteger(count) && count > 0 ? count : 5;
+            return { ok: true, notes: logs.slice(-n).reverse() };
+        } catch (e) {
+            console.error('Get recent notes action error:', e);
+            return { ok: false, error: 'Failed to read notes.' };
         }
     }
 
@@ -569,7 +673,16 @@ const DriveDashApp = (function() {
 
     // Public API
     return {
-        init
+        init,
+        // Prompt-free actions for the voice assistant tool layer (assistant.js).
+        actions: {
+            navigateHome: actionNavigateHome,
+            findFuel: actionFindFuel,
+            shareLocation: actionShareLocation,
+            composeWhatsAppMessage: actionComposeWhatsAppMessage,
+            addVoiceNote: actionAddVoiceNote,
+            getRecentNotes: actionGetRecentNotes
+        }
     };
 })();
 
