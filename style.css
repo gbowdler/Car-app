@@ -30,6 +30,7 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    height: 100dvh; /* accounts for mobile browser chrome so the layout isn't taller than the visible viewport */
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -40,6 +41,7 @@ body {
 /* --- 4. STATUS HEADER (TOP 16%) --- */
 #status-bar {
     height: 16vh;
+    height: 16dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -81,6 +83,7 @@ body {
     gap: 15px;
     padding: 15px;
     height: 62vh;
+    height: 62dvh;
     box-sizing: border-box;
     position: relative;
     z-index: 20;
@@ -118,6 +121,7 @@ body {
     top: 0; left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.95);
     z-index: 9999 !important; /* Forces modal to front */
     justify-content: center;
@@ -131,6 +135,7 @@ body {
     border-radius: 30px;
     width: 85%;
     max-height: 85vh;
+    max-height: 85dvh;
     overflow-y: auto;
     text-align: center;
     box-shadow: 0 0 30px rgba(255,255,255,0.1);
@@ -162,6 +167,7 @@ body {
 /* --- 7. VOICE ASSISTANT BAR (BOTTOM 22%) --- */
 #assistant-bar {
     height: 22vh;
+    height: 22dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
